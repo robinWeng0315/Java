@@ -14,7 +14,7 @@ public class CircleLinkedList<E> {
     //For better O.O design this should be private allows for better black box design
     private int size;
     //this will point to dummy node;
-    private Node<E> head;
+    private Node<E> head =  null;
 
     //constructer for class.. here we will make a dummy node for circly linked list implementation with reduced error catching as our list will never be empty;
     public CircleLinkedList() {
@@ -44,22 +44,20 @@ public class CircleLinkedList<E> {
             //catching errors
             throw new IndexOutOfBoundsException("position cannot be greater than size or negative");
         }
-        Node<E> iterator = head.next;
         //we need to keep track of the element before the element we want to remove we can see why bellow.
         Node<E> before = head;
         for (int i = 1; i <= pos; i++) {
-            iterator = iterator.next;
             before = before.next;
         }
-        E saved = iterator.value;
-        // assigning the next referance to the the element following the element we want to remove... the last element will be assigned to the head.
-        before.next = iterator.next;
+        Node<E> destroy = before.next;
+        E saved = destroy.value;
+        // assigning the next reference to the the element following the element we want to remove... the last element will be assigned to the head.
+        before.next = before.next.next;
         // scrubbing
-        iterator.next = null;
-        iterator.value = null;
+        destroy = null;
+        size--;
         return saved;
 
     }
 
 }
-

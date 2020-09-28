@@ -18,135 +18,277 @@ public class SinglyLinkedList {
     private Node head;
 
     /**
-     * This method inserts an element at the head
-     *
-     * @param x Element to be added
+     * Size of SinglyLinkedList
      */
-    public void insertHead(int x) {
-        Node newNode = new Node(x);
-        newNode.next = head;
-        head = newNode;
+    private int size;
+
+    /**
+     * Init SinglyLinkedList
+     */
+    public SinglyLinkedList() {
+        head = null;
+        size = 0;
     }
 
     /**
-     * Inserts a new node at a specified position
+     * Init SinglyLinkedList with specified head node and size
+     *
+     * @param head the head node of list
+     * @param size the size of list
+     */
+    public SinglyLinkedList(Node head, int size) {
+        this.head = head;
+        this.size = size;
+    }
+
+    /**
+     * Inserts an element at the head of the list
+     *
+     * @param x element to be added
+     */
+    public void insertHead(int x) {
+        insertNth(x, 0);
+    }
+
+    /**
+     * Insert an element at the tail of the list
+     *
+     * @param data element to be added
+     */
+    public void insert(int data) {
+        insertNth(data, size);
+    }
+
+    /**
+     * Inserts a new node at a specified position of the list
      *
      * @param data     data to be stored in a new node
      * @param position position at which a new node is to be inserted
      */
-
     public void insertNth(int data, int position) {
-        if (position < 0 || position > getSize()) {
-            throw new RuntimeException("position less than zero or position more than the count of list");
-        } else if (position == 0)
-            insertHead(data);
-        else {
-            Node cur = head;
-            Node node = new Node(data);
-            for (int i = 1; i < position; ++i) {
-                cur = cur.next;
-            }
-            node.next = cur.next;
-            cur.next = node;
+        checkBounds(position, 0, size);
+        Node newNode = new Node(data);
+        if (head == null) { /* the list is empty */
+            head = newNode;
+            size++;
+            return;
+        } else if (position == 0) { /* insert at the head of the list */
+            newNode.next = head;
+            head = newNode;
+            size++;
+            return;
         }
+        Node cur = head;
+        for (int i = 0; i < position - 1; ++i) {
+            cur = cur.next;
+        }
+        newNode.next = cur.next;
+        cur.next = newNode;
+        size++;
     }
 
+
     /**
-     * This method deletes an element at the head
-     *
-     * @return The element deleted
+     * Deletes a node at the head
      */
     public void deleteHead() {
-        if (isEmpty()) {
-            throw new RuntimeException("The list is empty!");
-        }
-
-        head = head.next;
+        deleteNth(0);
     }
 
     /**
-     * This method deletes an element at Nth position
+     * Deletes an element at the tail
+     */
+    public void delete() {
+        deleteNth(size - 1);
+    }
+
+    /**
+     * Deletes an element at Nth position
      */
     public void deleteNth(int position) {
-        if (position < 0 || position > getSize()) {
-            throw new RuntimeException("position less than zero or position more than the count of list");
-        } else if (position == 0)
-            deleteHead();
-        else {
-            Node cur = head;
-            for (int i = 1; i < position; ++i) {
-                cur = cur.next;
-            }
-            cur.next = cur.next.next;
+        checkBounds(position, 0, size - 1);
+        if (position == 0) {
+            Node destroy = head;
+            head = head.next;
+            destroy = null; /* clear to let GC do its work */
+            size--;
+            return;
         }
+        Node cur = head;
+        for (int i = 0; i < position - 1; ++i) {
+            cur = cur.next;
+        }
+
+        Node destroy = cur.next;
+        cur.next = cur.next.next;
+        destroy = null; // clear to let GC do its work
+
+        size--;
+    }
+
+    /**
+     * @param position to check position
+     * @param low      low index
+     * @param high     high index
+     * @throws IndexOutOfBoundsException if {@code position} not in range {@code low} to {@code high}
+     */
+    public void checkBounds(int position, int low, int high) {
+        if (position > high || position < low) {
+            throw new IndexOutOfBoundsException(position + "");
+        }
+    }
+
+    /**
+     * Clear all nodes in the list
+     */
+    public void clear() {
+        Node cur = head;
+        while (cur != null) {
+            Node prev = cur;
+            cur = cur.next;
+            prev = null; // clear to let GC do its work
+        }
+        head = null;
+        size = 0;
     }
 
     /**
      * Checks if the list is empty
      *
-     * @return true is list is empty
+     * @return {@code true} if list is empty, otherwise {@code false}.
      */
     public boolean isEmpty() {
-        return getSize() == 0;
+        return size == 0;
     }
 
     /**
-     * Prints contents of the list
-     */
-    public void display() {
-        Node current = head;
-        while (current != null) {
-            System.out.print(current.value + " ");
-            current = current.next;
-        }
-        System.out.println();
-    }
-
-    /**
-     * Returns the size of the linked list
-     */
-    public int getSize() {
-        if (head == null)
-            return 0;
-        else {
-            Node current = head;
-            int size = 1;
-            while (current.next != null) {
-                current = current.next;
-                size++;
-            }
-            return size;
-        }
-    }
-
-    /**
-     * Main method
+     * Returns the size of the linked list.
      *
-     * @param args Command line arguments
+     * @return the size of the list.
      */
-    public static void main(String args[]) {
-        SinglyLinkedList myList = new SinglyLinkedList();
+    public int size() {
+        return size;
+    }
 
-        assert myList.isEmpty();
+    /**
+     * Get head of the list.
+     *
+     * @return head of the list.
+     */
+    public Node getHead() {
+        return head;
+    }
 
-        myList.insertHead(5);
-        myList.insertHead(7);
-        myList.insertHead(10);
+    /**
+     * Calculate the count of the list manually
+     *
+     * @return count of the list
+     */
+    public int count() {
+        int count = 0;
+        Node cur = head;
+        while (cur != null) {
+            cur = cur.next;
+            count++;
+        }
+        return count;
+    }
 
-        myList.display(); // 10 -> 7 -> 5
+    /**
+     * Test if the value key is present in the list.
+     *
+     * @param key the value to be searched.
+     * @return {@code true} if key is present in the list, otherwise {@code false}.
+     */
+    public boolean search(int key) {
+        Node cur = head;
+        while (cur != null) {
+            if (cur.value == key) {
+                return true;
+            }
+            cur = cur.next;
+        }
+        return false;
+    }
 
-        myList.deleteHead();
+    /**
+     * Return element at special index.
+     *
+     * @param index given index of element
+     * @return element at special index.
+     */
+    public int getNth(int index) {
+        checkBounds(index, 0, size - 1);
+        Node cur = head;
+        for (int i = 0; i < index; ++i) {
+            cur = cur.next;
+        }
+        return cur.value;
+    }
 
-        myList.display(); // 7 -> 5
 
-        myList.insertNth(11, 2);
+    @Override
+    public String toString() {
+        if (size == 0) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder();
+        Node cur = head;
+        while (cur != null) {
+            builder.append(cur.value).append("->");
+            cur = cur.next;
+        }
+        return builder.replace(builder.length() - 2, builder.length(), "").toString();
+    }
 
-        myList.display(); // 7 -> 5 -> 11
 
-        myList.deleteNth(1);
+    /**
+     * Driver Code
+     */
+    public static void main(String[] arg) {
+        SinglyLinkedList list = new SinglyLinkedList();
+        assert list.isEmpty();
+        assert list.size() == 0
+                && list.count() == 0;
+        assert list.toString().equals("");
 
-        myList.display(); // 7-> 11
+        /* Test insert function */
+        list.insertHead(5);
+        list.insertHead(7);
+        list.insertHead(10);
+        list.insert(3);
+        list.insertNth(1, 4);
+        assert list.toString().equals("10->7->5->3->1");
 
+        /* Test search function */
+        assert list.search(10)
+                && list.search(5)
+                && list.search(1)
+                && !list.search(100);
+
+        /* Test get function */
+        assert list.getNth(0) == 10
+                && list.getNth(2) == 5
+                && list.getNth(4) == 1;
+
+        /* Test delete function */
+        list.deleteHead();
+        list.deleteNth(1);
+        list.delete();
+        assert list.toString().equals("7->3");
+
+        assert list.size == 2
+                && list.size() == list.count();
+
+        list.clear();
+        assert list.isEmpty();
+
+        try {
+            list.delete();
+            assert false; /* this should not happen */
+        } catch (Exception e) {
+            assert true; /* this should happen */
+        }
     }
 }
 
@@ -166,13 +308,21 @@ class Node {
      */
     Node next;
 
+    Node() {
+
+    }
+
     /**
      * Constructor
      *
      * @param value Value to be put in the node
      */
     Node(int value) {
+        this(value, null);
+    }
+
+    Node(int value, Node next) {
         this.value = value;
-        this.next = null;
+        this.next = next;
     }
 }

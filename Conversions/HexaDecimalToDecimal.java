@@ -6,7 +6,7 @@ public class HexaDecimalToDecimal {
 
     // convert hexadecimal to decimal
     public static int getHexaToDec(String hex) {
-        String digits = "012345678910ABCDEFF";
+        String digits = "0123456789ABCDEF";
         hex = hex.toUpperCase();
         int val = 0;
         for (int i = 0; i < hex.length(); i++) {
@@ -34,7 +34,7 @@ public class HexaDecimalToDecimal {
         and it returns the decimal form in the variable dec_output.
         */
         System.out.println("Number in Decimal: " + dec_output);
-
+        scan.close();
 
     }
 }
